@@ -28,7 +28,7 @@ func (i *Image) Save(filename string) error {
 	return ioutil.WriteFile(filename, i.Data, 0600)
 }
 
-// Convert image to data uri.
+// Convert image to base64 data uri.
 func (i *Image) DataURI() string {
 	return fmt.Sprintf("data:%s;base64,%s", i.ContentType, base64.StdEncoding.EncodeToString(i.Data))
 }
@@ -49,7 +49,7 @@ func okContentType(contentType string) bool {
 	return contentType == "image/png" || contentType == "image/jpeg" || contentType == "image/gif"
 }
 
-// Process uploaded file into and image.
+// Process uploaded file into an image.
 func Process(r *http.Request, field string) (*Image, error) {
 	file, info, err := r.FormFile(field)
 
