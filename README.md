@@ -60,4 +60,10 @@ func main() {
 </html>
 ```
 
+## Contributors
+
+* Ola Holmström (@olahol)
+* Shintaro Kaneko (@kaneshin)
+
+
 ## [Documentation](https://godoc.org/github.com/olahol/go-imageupload)
