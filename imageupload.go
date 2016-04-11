@@ -128,7 +128,7 @@ func ThumbnailPNG(i *Image, width int, height int) (*Image, error) {
 	bs := data.Bytes()
 
 	t := &Image{
-		Filename:    "thumbnail.jpg",
+		Filename:    "thumbnail.png",
 		ContentType: "image/png",
 		Data:        bs,
 		Size:        len(bs),
