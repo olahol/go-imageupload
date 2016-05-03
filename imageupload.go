@@ -40,6 +40,16 @@ func (i *Image) Write(w http.ResponseWriter) {
 	w.Write(i.Data)
 }
 
+// Create JPEG thumbnail from image.
+func (i *Image) ThumbnailJPEG(width int, height int, quality int) (*Image, error) {
+	return ThumbnailJPEG(i, width, height, quality)
+}
+
+// Create PNG thumbnail from image.
+func (i *Image) ThumbnailPNG(width int, height int) (*Image, error) {
+	return ThumbnailPNG(i, width, height)
+}
+
 // Limit the size of uploaded files, put this before imageupload.Process.
 func LimitFileSize(maxSize int64, w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, maxSize)
