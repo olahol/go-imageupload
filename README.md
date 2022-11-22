@@ -12,25 +12,29 @@ go get github.com/olahol/go-imageupload
 
 ## [Example](https://github.com/olahol/go-imageupload/tree/master/examples)
 
-Thumbnail creator using [Gin](https://github.com/gin-gonic/gin).
+Thumbnail creator.
 
 ```go
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"net/http"
+
 	"github.com/olahol/go-imageupload"
 )
 
 func main() {
-	r := gin.Default()
-
-	r.GET("/", func(c *gin.Context) {
-		c.File("index.html")
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "index.html")
 	})
 
-	r.POST("/upload", func(c *gin.Context) {
-		img, err := imageupload.Process(c.Request, "file")
+	http.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			http.NotFound(w, r)
+			return
+		}
+
+		img, err := imageupload.Process(r, "file")
 
 		if err != nil {
 			panic(err)
@@ -42,10 +46,10 @@ func main() {
 			panic(err)
 		}
 
-		thumb.Write(c.Writer)
+		thumb.Write(w)
 	})
 
-	r.Run(":5000")
+	http.ListenAndServe(":5000", nil)
 }
 ```
 

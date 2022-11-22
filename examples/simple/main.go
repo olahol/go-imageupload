@@ -1,32 +1,30 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/olahol/go-imageupload"
 	"net/http"
+
+	"github.com/olahol/go-imageupload"
 )
 
 var currentImage *imageupload.Image
 
 func main() {
-	r := gin.Default()
-
-	r.GET("/", func(c *gin.Context) {
-		c.File("index.html")
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "index.html")
 	})
 
-	r.GET("/image", func(c *gin.Context) {
+	http.HandleFunc("/image", func(w http.ResponseWriter, r *http.Request) {
 		if currentImage == nil {
-			c.AbortWithStatus(http.StatusNotFound)
+			http.NotFound(w, r)
 			return
 		}
 
-		currentImage.Write(c.Writer)
+		currentImage.Write(w)
 	})
 
-	r.GET("/thumbnail", func(c *gin.Context) {
+	http.HandleFunc("/thumbnail", func(w http.ResponseWriter, r *http.Request) {
 		if currentImage == nil {
-			c.AbortWithStatus(http.StatusNotFound)
+			http.NotFound(w, r)
 			return
 		}
 
@@ -36,11 +34,16 @@ func main() {
 			panic(err)
 		}
 
-		t.Write(c.Writer)
+		t.Write(w)
 	})
 
-	r.POST("/upload", func(c *gin.Context) {
-		img, err := imageupload.Process(c.Request, "file")
+	http.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			http.NotFound(w, r)
+			return
+		}
+
+		img, err := imageupload.Process(r, "file")
 
 		if err != nil {
 			panic(err)
@@ -48,8 +51,8 @@ func main() {
 
 		currentImage = img
 
-		c.Redirect(http.StatusMovedPermanently, "/")
+		http.Redirect(w, r, "/", http.StatusMovedPermanently)
 	})
 
-	r.Run(":5000")
+	http.ListenAndServe(":5000", nil)
 }
